@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
+import { useT } from '../../store/langStore';
 import { triggerConfetti } from '../Effects/Confetti';
 
 type Phase = 'hidden' | 'glow' | 'heart' | 'confetti' | 'text' | 'cards' | 'done';
@@ -15,6 +16,7 @@ const TIMINGS = {
 
 export default function PrizeReveal() {
   const { gameWon } = useGameStore();
+  const t = useT();
   const [phase, setPhase] = useState<Phase>('hidden');
 
   useEffect(() => {
@@ -47,6 +49,8 @@ export default function PrizeReveal() {
     const order: Phase[] = ['hidden', 'glow', 'heart', 'confetti', 'text', 'cards', 'done'];
     return order.indexOf(phase) >= order.indexOf(p);
   };
+
+  const messageLines = t.prize.message.split('\n');
 
   return (
     <>
@@ -150,7 +154,7 @@ export default function PrizeReveal() {
                 margin: 0,
               }}
             >
-              You Did It, Alix!
+              {t.prize.title}
             </h1>
 
             <p
@@ -165,14 +169,10 @@ export default function PrizeReveal() {
                 textShadow: '0 1px 8px rgba(0,0,0,0.4)',
               }}
             >
-              From a mattress on the floor to building our world together,
-              <br />
-              every moment with you is my favorite adventure.
-              <br />
-              <br />
-              Happy Valentine's Day, mi amor.
-              <br />
-              <span style={{ color: '#ffd700' }}>— Luigi</span>
+              {messageLines.map((line, i) =>
+                line === '' ? <br key={i} /> : <span key={i}>{line}<br /></span>
+              )}
+              <span style={{ color: '#ffd700' }}>{t.prize.signature}</span>
             </p>
           </div>
         )}
@@ -191,15 +191,17 @@ export default function PrizeReveal() {
           >
             <PrizeCard
               emoji="🧖‍♀️"
-              title="Full Day SPA"
-              subtitle="A complete day of relaxation — you deserve it"
+              title={t.prize.spaTitle}
+              subtitle={t.prize.spaSubtitle}
               direction="left"
+              voucherLabel={t.prize.voucher}
             />
             <PrizeCard
               emoji="📸"
-              title="Photography Session"
-              subtitle="A professional photo session — capturing our moments"
+              title={t.prize.photoTitle}
+              subtitle={t.prize.photoSubtitle}
               direction="right"
+              voucherLabel={t.prize.voucher}
             />
           </div>
         )}
@@ -215,7 +217,7 @@ export default function PrizeReveal() {
               zIndex: 3,
             }}
           >
-            Screenshot this!
+            {t.prize.screenshot}
           </p>
         )}
       </div>
@@ -228,11 +230,13 @@ function PrizeCard({
   title,
   subtitle,
   direction,
+  voucherLabel,
 }: {
   emoji: string;
   title: string;
   subtitle: string;
   direction: 'left' | 'right';
+  voucherLabel: string;
 }) {
   return (
     <div
@@ -310,7 +314,7 @@ function PrizeCard({
             letterSpacing: '1px',
           }}
         >
-          VOUCHER
+          {voucherLabel}
         </span>
       </div>
     </div>

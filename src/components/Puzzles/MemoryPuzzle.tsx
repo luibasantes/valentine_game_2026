@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useGameStore } from '../../store/gameStore';
-import { memoryCards } from '../../utils/puzzleData';
+import { useT } from '../../store/langStore';
+import { useLangStore } from '../../store/langStore';
+import { getMemoryCards } from '../../utils/puzzleData';
 import type { MemoryCard } from '../../utils/puzzleData';
 
 const COLORS = {
@@ -31,18 +33,22 @@ function shuffle<T>(arr: T[]): T[] {
 
 export default function MemoryPuzzle() {
   const { completeZone, triggerFail } = useGameStore();
+  const t = useT();
+  const lang = useLangStore((s) => s.lang);
   const [fadingIn, setFadingIn] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
   const [mismatches, setMismatches] = useState(0);
   const [locked, setLocked] = useState(false);
 
+  const memoryCards = useMemo(() => getMemoryCards(lang), [lang]);
+
   const initialCards = useMemo(() => {
-    const pairs: CardState[] = memoryCards.flatMap((card, _i) => [
+    const pairs: CardState[] = memoryCards.flatMap((card) => [
       { card, uniqueId: card.id * 2, flipped: false, matched: false },
       { card, uniqueId: card.id * 2 + 1, flipped: false, matched: false },
     ]);
     return shuffle(pairs);
-  }, []);
+  }, [memoryCards]);
 
   const [cards, setCards] = useState<CardState[]>(initialCards);
   const [selected, setSelected] = useState<number[]>([]);
@@ -87,7 +93,7 @@ export default function MemoryPuzzle() {
 
           if (newMismatchCount >= MAX_MISMATCHES) {
             setTimeout(() => {
-              triggerFail('Too many mismatches! Our memories are tricky...');
+              triggerFail(t.memory.failMessage);
             }, 800);
             return;
           }
@@ -104,7 +110,7 @@ export default function MemoryPuzzle() {
         }
       }
     },
-    [cards, selected, locked, mismatches, completeZone, triggerFail],
+    [cards, selected, locked, mismatches, completeZone, triggerFail, t.memory.failMessage],
   );
 
   const overlayStyle: React.CSSProperties = {
@@ -147,7 +153,7 @@ export default function MemoryPuzzle() {
           <div style={{ textAlign: 'center', position: 'relative' }}>
             <div style={{ fontSize: 64, marginBottom: 16 }}>💻💕</div>
             <h2 style={{ color: COLORS.pink, fontSize: 26 }}>
-              This is where our story began
+              {t.memory.successMessage}
             </h2>
           </div>
         </div>
@@ -189,7 +195,7 @@ export default function MemoryPuzzle() {
 
         <div style={{ position: 'relative' }}>
           <h2 style={{ color: COLORS.pink, textAlign: 'center', margin: '0 0 6px', fontSize: 20 }}>
-            Match Our Memories
+            {t.memory.title}
           </h2>
 
           <div
@@ -202,7 +208,7 @@ export default function MemoryPuzzle() {
             }}
           >
             <span style={{ color: COLORS.lightPink, fontSize: 13 }}>
-              Pairs: {Math.floor(cards.filter((c) => c.matched).length / 2)}/{memoryCards.length}
+              {t.memory.pairs}: {Math.floor(cards.filter((c) => c.matched).length / 2)}/{memoryCards.length}
             </span>
             <span
               style={{
@@ -211,7 +217,7 @@ export default function MemoryPuzzle() {
                 transition: 'color 0.3s',
               }}
             >
-              Mismatches: {mismatches}/{MAX_MISMATCHES}
+              {t.memory.mismatches}: {mismatches}/{MAX_MISMATCHES}
             </span>
           </div>
 
@@ -236,7 +242,6 @@ export default function MemoryPuzzle() {
                   }}
                 >
                   <div className={`memory-card-inner ${isRevealed ? 'flipped' : ''}`}>
-                    {/* Front (hidden side) */}
                     <div
                       className="memory-card-face"
                       style={{
@@ -247,7 +252,6 @@ export default function MemoryPuzzle() {
                       <span style={{ fontSize: 28 }}>💌</span>
                     </div>
 
-                    {/* Back (revealed side) */}
                     <div
                       className="memory-card-face"
                       style={{

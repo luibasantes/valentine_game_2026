@@ -4,6 +4,7 @@ import { Text, Billboard } from '@react-three/drei';
 import * as THREE from 'three';
 import type { Group } from 'three';
 import { useGameStore } from '../../store/gameStore.ts';
+import { useT } from '../../store/langStore.ts';
 
 const MOVE_SPEED = 8;
 const MOUSE_SENSITIVITY = 0.003;
@@ -23,14 +24,14 @@ interface TriggerZone {
   radius: number;
   puzzleId: string;
   zoneIndex: number;
-  label: string;
+  labelIndex: number;
 }
 
 const TRIGGER_ZONES: TriggerZone[] = [
-  { position: new THREE.Vector3(0, 0, -30), radius: 4, puzzleId: 'trivia', zoneIndex: 1, label: 'Press E - Love Letter' },
-  { position: new THREE.Vector3(0, 0, -57), radius: 4, puzzleId: 'driving', zoneIndex: 2, label: 'Press E - Get In!' },
-  { position: new THREE.Vector3(3, 0, -88), radius: 4, puzzleId: 'memory', zoneIndex: 3, label: 'Press E - Play Memories' },
-  { position: new THREE.Vector3(0.5, 0, -120), radius: 4, puzzleId: 'sorting', zoneIndex: 4, label: 'Press E - Take a Seat' },
+  { position: new THREE.Vector3(0, 0, -30), radius: 4, puzzleId: 'trivia', zoneIndex: 1, labelIndex: 0 },
+  { position: new THREE.Vector3(0, 0, -57), radius: 4, puzzleId: 'driving', zoneIndex: 2, labelIndex: 1 },
+  { position: new THREE.Vector3(3, 0, -88), radius: 4, puzzleId: 'memory', zoneIndex: 3, labelIndex: 2 },
+  { position: new THREE.Vector3(0.5, 0, -120), radius: 4, puzzleId: 'sorting', zoneIndex: 4, labelIndex: 3 },
 ];
 
 interface GateBarrier {
@@ -48,6 +49,7 @@ const GATE_BARRIERS: GateBarrier[] = [
 export default function PlayerController() {
   const playerRef = useRef<Group>(null);
   const { camera } = useThree();
+  const t = useT();
 
   const playerPos = useRef(new THREE.Vector3(0, 0.6, 4));
   const velocityY = useRef(0);
@@ -280,9 +282,9 @@ export default function PlayerController() {
             {(() => {
               const zoneIdx = nearTrigger.zoneIndex;
               const canActivate = zoneIdx === 1 || zonesCompleted[zoneIdx - 2];
-              if (zonesCompleted[zoneIdx - 1]) return 'Completed!';
-              if (!canActivate) return 'Complete previous zone first';
-              return nearTrigger.label;
+              if (zonesCompleted[zoneIdx - 1]) return t.player.completed;
+              if (!canActivate) return t.player.completePrevious;
+              return t.player.triggerLabels[nearTrigger.labelIndex];
             })()}
           </Text>
         </Billboard>

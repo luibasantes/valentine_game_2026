@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import type { Mesh, Group } from 'three';
 import HeartGate from './HeartGate.tsx';
 import { useGameStore } from '../../store/gameStore.ts';
+import { useT } from '../../store/langStore.ts';
 
 interface TriggerObjectProps {
   position: [number, number, number];
@@ -17,6 +18,7 @@ function TriggerObject({ position, puzzleId, label, children }: TriggerObjectPro
   const glowRef = useRef<Mesh>(null);
   const groupRef = useRef<Group>(null);
   const activePuzzle = useGameStore((s) => s.activePuzzle);
+  const t = useT();
   const isActive = activePuzzle === puzzleId;
 
   useFrame((state) => {
@@ -55,7 +57,7 @@ function TriggerObject({ position, puzzleId, label, children }: TriggerObjectPro
         outlineWidth={0.05}
         outlineColor="#000000"
       >
-        {isActive ? 'Active...' : label}
+        {isActive ? t.zoneLabels.active : label}
       </Text>
     </group>
   );
@@ -63,6 +65,7 @@ function TriggerObject({ position, puzzleId, label, children }: TriggerObjectPro
 
 // Zone 0: Park bench at origin
 function Zone0Start() {
+  const t = useT();
   return (
     <group position={[0, 0, 0]}>
       {/* Park bench */}
@@ -97,7 +100,7 @@ function Zone0Start() {
           outlineWidth={0.04}
           outlineColor="#FFFFFF"
         >
-          {"Alix's Valentine Adventure"}
+          {t.zoneLabels.welcomeSign}
         </Text>
       </Float>
 
@@ -119,6 +122,7 @@ function Zone0Start() {
 
 // Zone 1: University courtyard
 function Zone1University() {
+  const t = useT();
   return (
     <group position={[0, 0, -30]}>
       {/* Fountain base */}
@@ -159,7 +163,7 @@ function Zone1University() {
       ))}
 
       {/* Trigger: Floating love letter */}
-      <TriggerObject position={[0, 1.5, 0]} puzzleId="trivia" label="Press E - Love Letter">
+      <TriggerObject position={[0, 1.5, 0]} puzzleId="trivia" label={t.zoneLabels.triggerLabels[0]}>
         <mesh rotation={[0, 0, 0.1]}>
           <boxGeometry args={[0.5, 0.35, 0.03]} />
           <meshStandardMaterial color="#FFF0E6" emissive="#FFB3C6" emissiveIntensity={0.3} />
@@ -177,6 +181,7 @@ function Zone1University() {
 
 // Zone 2: Parking lot
 function Zone2ParkingLot() {
+  const t = useT();
   const carColors = ['#3366CC', '#CC3333', '#33AA33', '#CCCC33'];
 
   return (
@@ -228,7 +233,7 @@ function Zone2ParkingLot() {
       ))}
 
       {/* Trigger: Car with bow */}
-      <TriggerObject position={[0, 1.5, 3]} puzzleId="driving" label="Press E - Get In!">
+      <TriggerObject position={[0, 1.5, 3]} puzzleId="driving" label={t.zoneLabels.triggerLabels[1]}>
         <group>
           <mesh position={[0, -0.3, 0]}>
             <boxGeometry args={[0.8, 0.3, 1.2]} />
@@ -249,6 +254,7 @@ function Zone2ParkingLot() {
 
 // Zone 3: Cozy apartment
 function Zone3Apartment() {
+  const t = useT();
   return (
     <group position={[0, 0, -90]}>
       {/* Floor */}
@@ -323,7 +329,7 @@ function Zone3Apartment() {
       ))}
 
       {/* Trigger: Monitor screen */}
-      <TriggerObject position={[3, 2, -2]} puzzleId="memory" label="Press E - Play Memories">
+      <TriggerObject position={[3, 2, -2]} puzzleId="memory" label={t.zoneLabels.triggerLabels[2]}>
         <mesh>
           <boxGeometry args={[0.3, 0.3, 0.3]} />
           <meshStandardMaterial color="#4488FF" emissive="#4488FF" emissiveIntensity={0.5} transparent opacity={0.6} />
@@ -335,6 +341,7 @@ function Zone3Apartment() {
 
 // Zone 4: Movie theater
 function Zone4Theater() {
+  const t = useT();
   return (
     <group position={[0, 0, -120]}>
       {/* Theater floor */}
@@ -396,7 +403,7 @@ function Zone4Theater() {
       </group>
 
       {/* Trigger: Center seat */}
-      <TriggerObject position={[0.5, 1.2, 0]} puzzleId="sorting" label="Press E - Take a Seat">
+      <TriggerObject position={[0.5, 1.2, 0]} puzzleId="sorting" label={t.zoneLabels.triggerLabels[3]}>
         <mesh>
           <boxGeometry args={[0.4, 0.4, 0.4]} />
           <meshStandardMaterial color="#FFD700" emissive="#FFD700" emissiveIntensity={0.4} transparent opacity={0.5} />

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useGameStore } from '../../store/gameStore';
+import { useT } from '../../store/langStore';
 
 const COLORS = {
   pink: '#ff6b9d',
@@ -25,21 +26,17 @@ interface Obstacle {
 }
 
 const OBSTACLES: Obstacle[] = [
-  // Top row parked cars
   { x: 70, y: 30, w: 42, h: 72, type: 'car', color: '#7888a0' },
   { x: 170, y: 30, w: 42, h: 72, type: 'car', color: '#6a9b78' },
   { x: 270, y: 30, w: 42, h: 72, type: 'car', color: '#a07888' },
   { x: 370, y: 30, w: 42, h: 72, type: 'car', color: '#8888a0' },
   { x: 470, y: 30, w: 42, h: 72, type: 'car', color: '#88a078' },
-  // Bottom row parked cars (with gap for target)
   { x: 70, y: 390, w: 42, h: 72, type: 'car', color: '#a09070' },
   { x: 170, y: 390, w: 42, h: 72, type: 'car', color: '#7090a0' },
   { x: 470, y: 390, w: 42, h: 72, type: 'car', color: '#9078a0' },
-  // Middle blockers creating a maze
   { x: 130, y: 190, w: 42, h: 72, type: 'car', color: '#7a7090' },
   { x: 350, y: 170, w: 42, h: 72, type: 'car', color: '#708a7a' },
   { x: 250, y: 280, w: 42, h: 72, type: 'car', color: '#8a7078' },
-  // Cones creating tight corridors
   { x: 90, y: 150, w: 16, h: 16, type: 'cone' },
   { x: 210, y: 140, w: 16, h: 16, type: 'cone' },
   { x: 300, y: 180, w: 16, h: 16, type: 'cone' },
@@ -63,6 +60,7 @@ function aabb(
 
 export default function DrivingPuzzle() {
   const { completeZone, triggerFail } = useGameStore();
+  const t = useT();
   const [fadingIn, setFadingIn] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -144,7 +142,7 @@ export default function DrivingPuzzle() {
 
       if (checkCollisions(newX, newY)) {
         doneRef.current = true;
-        triggerFail('You Crashed! Not again Alix 🤦‍♂️');
+        triggerFail(t.driving.failMessage);
         return;
       }
 
@@ -175,7 +173,7 @@ export default function DrivingPuzzle() {
 
     frameRef.current = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(frameRef.current);
-  }, [checkCollisions, checkTarget, completeZone, triggerFail]);
+  }, [checkCollisions, checkTarget, completeZone, triggerFail, t.driving.failMessage]);
 
   const overlayStyle: React.CSSProperties = {
     position: 'fixed',
@@ -197,7 +195,7 @@ export default function DrivingPuzzle() {
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: 64, marginBottom: 16 }}>🚗💕</div>
           <h2 style={{ color: COLORS.pink, fontSize: 28 }}>
-            Perfect parking! Luigi is impressed 😏
+            {t.driving.successMessage}
           </h2>
         </div>
       </div>
@@ -218,10 +216,10 @@ export default function DrivingPuzzle() {
       `}</style>
 
       <h2 style={{ color: COLORS.pink, marginBottom: 8, fontSize: 22 }}>
-        Park Alix's Car! 🚗
+        {t.driving.title}
       </h2>
       <p style={{ color: COLORS.lightPink, marginBottom: 20, fontSize: 14 }}>
-        Drive into the green spot — don't hit anything!
+        {t.driving.subtitle}
       </p>
 
       <div
@@ -236,7 +234,6 @@ export default function DrivingPuzzle() {
           boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
         }}
       >
-        {/* Parking lines */}
         {[0, 1, 2, 3, 4].map((i) => (
           <div
             key={`lt-${i}`}
@@ -263,7 +260,6 @@ export default function DrivingPuzzle() {
             }}
           />
         ))}
-        {/* Center dashed line */}
         <div
           style={{
             position: 'absolute',
@@ -275,7 +271,6 @@ export default function DrivingPuzzle() {
           }}
         />
 
-        {/* Target spot */}
         <div
           style={{
             position: 'absolute',
@@ -301,7 +296,6 @@ export default function DrivingPuzzle() {
           }}>P</span>
         </div>
 
-        {/* Obstacles */}
         {OBSTACLES.map((obs, i) => {
           if (obs.type === 'cone') {
             return (
@@ -354,7 +348,6 @@ export default function DrivingPuzzle() {
           );
         })}
 
-        {/* Player car */}
         <div
           ref={carElRef}
           style={{
@@ -416,10 +409,10 @@ export default function DrivingPuzzle() {
           fontSize: 13,
         }}
       >
-        <span><b>W</b> Up</span>
-        <span><b>A</b> Left</span>
-        <span><b>S</b> Down</span>
-        <span><b>D</b> Right</span>
+        <span><b>W</b> {t.driving.up}</span>
+        <span><b>A</b> {t.driving.left}</span>
+        <span><b>S</b> {t.driving.down}</span>
+        <span><b>D</b> {t.driving.right}</span>
       </div>
     </div>
   );

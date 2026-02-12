@@ -46,8 +46,8 @@ export const useGameStore = create<GameState>((set) => ({
 
   setActivePuzzle: (puzzle) => set({ activePuzzle: puzzle }),
 
-  triggerFail: (message = 'Love is about trying again 💕') =>
-    set({ showFail: true, failMessage: message, activePuzzle: null }),
+  triggerFail: (message) =>
+    set({ showFail: true, failMessage: message ?? '', activePuzzle: null }),
 
   dismissFail: () =>
     set({

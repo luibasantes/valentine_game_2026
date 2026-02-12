@@ -1,15 +1,17 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useGameStore } from '../../store/gameStore';
+import { useT } from '../../store/langStore';
 
 const CHAR_INTERVAL = 35;
 const AUTO_DISMISS_MS = 5000;
 
 export default function DialogBox() {
   const { dialogMessage, setDialog } = useGameStore();
+  const t = useT();
   const [displayed, setDisplayed] = useState('');
   const [visible, setVisible] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
-  const autoRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const autoRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const fullTextRef = useRef('');
 
   const dismiss = useCallback(() => {
@@ -116,7 +118,7 @@ export default function DialogBox() {
           color: 'rgba(255,255,255,0.25)',
         }}
       >
-        click to continue
+        {t.dialog.clickToContinue}
       </span>
 
       <style>{`

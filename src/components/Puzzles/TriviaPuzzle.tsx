@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useGameStore } from '../../store/gameStore';
-import { triviaQuestions } from '../../utils/puzzleData';
+import { useT } from '../../store/langStore';
+import { useLangStore } from '../../store/langStore';
+import { getTriviaQuestions } from '../../utils/puzzleData';
 
 function shuffleOptions(options: string[], correctIndex: number) {
   const indexed = options.map((opt, i) => ({ opt, isCorrect: i === correctIndex }));
@@ -30,6 +32,8 @@ interface FloatingHeart {
 
 export default function TriviaPuzzle() {
   const { completeZone, triggerFail } = useGameStore();
+  const t = useT();
+  const lang = useLangStore((s) => s.lang);
   const [currentQ, setCurrentQ] = useState(0);
   const [fadingIn, setFadingIn] = useState(true);
   const [hearts, setHearts] = useState<FloatingHeart[]>([]);
@@ -39,11 +43,11 @@ export default function TriviaPuzzle() {
 
   const shuffledQuestions = useMemo(
     () =>
-      triviaQuestions.map((q) => {
+      getTriviaQuestions(lang).map((q) => {
         const { options, correctIndex } = shuffleOptions(q.options, q.correctIndex);
         return { ...q, options, correctIndex };
       }),
-    [],
+    [lang],
   );
 
   useEffect(() => {
@@ -83,7 +87,7 @@ export default function TriviaPuzzle() {
           }, 800);
         }
       } else {
-        triggerFail('That wasn\'t quite right... Try again with love!');
+        triggerFail(t.trivia.failMessage);
       }
     }, 600);
   };
@@ -136,13 +140,17 @@ export default function TriviaPuzzle() {
         <div style={{ ...cardStyle, animation: 'none' }}>
           <div style={{ fontSize: 64, marginBottom: 16 }}>💖</div>
           <h2 style={{ color: COLORS.pink, fontSize: 28, margin: '0 0 12px' }}>
-            The heart gate opens!
+            {t.trivia.successTitle}
           </h2>
-          <p style={{ color: COLORS.lightPink, fontSize: 16 }}>You know us so well...</p>
+          <p style={{ color: COLORS.lightPink, fontSize: 16 }}>{t.trivia.successSubtitle}</p>
         </div>
       </div>
     );
   }
+
+  const questionOfText = t.trivia.questionOf
+    .replace('{current}', String(currentQ + 1))
+    .replace('{total}', String(shuffledQuestions.length));
 
   return (
     <div style={overlayStyle}>
@@ -178,7 +186,7 @@ export default function TriviaPuzzle() {
         <div style={{ marginBottom: 24 }}>{progressDots}</div>
 
         <p style={{ color: '#aaa', fontSize: 13, margin: '0 0 8px' }}>
-          Question {currentQ + 1} of {shuffledQuestions.length}
+          {questionOfText}
         </p>
 
         <h2

@@ -9,6 +9,7 @@ import HUD from './components/UI/HUD';
 import FailScreen from './components/UI/FailScreen';
 import DialogBox from './components/UI/DialogBox';
 import PrizeReveal from './components/UI/PrizeReveal';
+import SettingsModal from './components/UI/SettingsModal';
 import TriviaPuzzle from './components/Puzzles/TriviaPuzzle';
 import DrivingPuzzle from './components/Puzzles/DrivingPuzzle';
 import MemoryPuzzle from './components/Puzzles/MemoryPuzzle';
@@ -29,7 +30,6 @@ export default function App() {
   const gameStarted = useGameStore((s) => s.gameStarted);
   const showFail = useGameStore((s) => s.showFail);
   const gameWon = useGameStore((s) => s.gameWon);
-  const resetToStart = useGameStore((s) => s.resetToStart);
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
@@ -66,41 +66,7 @@ export default function App() {
       {showFail && <FailScreen />}
       {gameWon && <PrizeReveal />}
 
-      {gameStarted && (
-        <button
-          onClick={resetToStart}
-          title="Restart"
-          style={{
-            position: 'fixed',
-            bottom: 16,
-            right: 16,
-            zIndex: 500,
-            width: 40,
-            height: 40,
-            borderRadius: '50%',
-            border: '1px solid rgba(255,107,157,0.3)',
-            background: 'rgba(45,31,61,0.6)',
-            backdropFilter: 'blur(6px)',
-            color: 'rgba(255,255,255,0.5)',
-            fontSize: 18,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.2s',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(255,107,157,0.25)';
-            e.currentTarget.style.color = '#fff';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(45,31,61,0.6)';
-            e.currentTarget.style.color = 'rgba(255,255,255,0.5)';
-          }}
-        >
-          ↺
-        </button>
-      )}
+      {gameStarted && <SettingsModal />}
     </div>
   );
 }

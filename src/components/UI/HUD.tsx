@@ -1,16 +1,9 @@
 import { useGameStore } from '../../store/gameStore';
-
-const ZONE_NAMES = [
-  'Start',
-  'University Garden',
-  'Parking Lot',
-  'Cozy Apartment',
-  'Movie Theater',
-  'Prize Gazebo',
-];
+import { useT } from '../../store/langStore';
 
 export default function HUD() {
   const { gameStarted, gameWon, showFail, currentZone, zonesCompleted } = useGameStore();
+  const t = useT();
 
   if (!gameStarted || gameWon || showFail) return null;
 
@@ -64,7 +57,7 @@ export default function HUD() {
           textShadow: '0 1px 4px rgba(0,0,0,0.5)',
         }}
       >
-        {ZONE_NAMES[currentZone]}
+        {t.zones[currentZone]}
       </span>
     </div>
   );

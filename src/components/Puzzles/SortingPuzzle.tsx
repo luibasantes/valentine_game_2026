@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useGameStore } from '../../store/gameStore';
-import { sortingScenarios } from '../../utils/puzzleData';
+import { useT } from '../../store/langStore';
+import { useLangStore } from '../../store/langStore';
+import { getSortingScenarios } from '../../utils/puzzleData';
 
 const COLORS = {
   pink: '#ff6b9d',
@@ -15,6 +17,10 @@ const REQUIRED_SCORE = 8;
 
 export default function SortingPuzzle() {
   const { completeZone, triggerFail } = useGameStore();
+  const t = useT();
+  const lang = useLangStore((s) => s.lang);
+  const scenarios = getSortingScenarios(lang);
+
   const [fadingIn, setFadingIn] = useState(true);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [score, setScore] = useState(0);
@@ -45,13 +51,13 @@ export default function SortingPuzzle() {
         setFeedback(null);
         const nextIdx = currentIdx + 1;
 
-        if (nextIdx >= sortingScenarios.length) {
+        if (nextIdx >= scenarios.length) {
           doneRef.current = true;
           setShowResult(true);
           if (newScore >= REQUIRED_SCORE) {
             setTimeout(() => completeZone(4), 2500);
           } else {
-            setTimeout(() => triggerFail('Alix is unpredictable... Try again!'), 2500);
+            setTimeout(() => triggerFail(t.sorting.failMessage), 2500);
           }
           return;
         }
@@ -61,7 +67,7 @@ export default function SortingPuzzle() {
         answeredRef.current = false;
       }, 700);
     },
-    [currentIdx, score, completeZone, triggerFail],
+    [currentIdx, score, completeZone, triggerFail, scenarios.length, t.sorting.failMessage],
   );
 
   const handleAnswer = useCallback(
@@ -70,10 +76,10 @@ export default function SortingPuzzle() {
       answeredRef.current = true;
       cancelAnimationFrame(timerRef.current);
 
-      const correct = sortingScenarios[currentIdx].answer === choice;
+      const correct = scenarios[currentIdx].answer === choice;
       advance(correct);
     },
-    [currentIdx, advance],
+    [currentIdx, advance, scenarios],
   );
 
   useEffect(() => {
@@ -133,7 +139,6 @@ export default function SortingPuzzle() {
     overflow: 'hidden',
   };
 
-  // Curtain accents
   const curtainLeft: React.CSSProperties = {
     position: 'absolute',
     left: 0,
@@ -149,6 +154,8 @@ export default function SortingPuzzle() {
     right: 0,
   };
 
+  const needToPassText = t.sorting.needToPass.replace('{n}', String(REQUIRED_SCORE));
+
   if (showResult) {
     const passed = score >= REQUIRED_SCORE;
     return (
@@ -159,10 +166,10 @@ export default function SortingPuzzle() {
           <div style={{ textAlign: 'center', position: 'relative' }}>
             <div style={{ fontSize: 64, marginBottom: 16 }}>{passed ? '🎬💕' : '😢'}</div>
             <h2 style={{ color: passed ? COLORS.pink : '#e74c3c', fontSize: 26, margin: '0 0 12px' }}>
-              {passed ? 'Luigi knows you too well' : 'Not quite...'}
+              {passed ? t.sorting.successMessage : t.sorting.failResultMessage}
             </h2>
             <p style={{ color: '#aaa', fontSize: 16 }}>
-              Score: {score}/{sortingScenarios.length}
+              {t.sorting.score}: {score}/{scenarios.length}
             </p>
           </div>
         </div>
@@ -170,7 +177,7 @@ export default function SortingPuzzle() {
     );
   }
 
-  const scenario = sortingScenarios[currentIdx];
+  const scenario = scenarios[currentIdx];
 
   return (
     <div style={overlayStyle}>
@@ -200,10 +207,10 @@ export default function SortingPuzzle() {
             }}
           >
             <span style={{ color: COLORS.pink, fontSize: 18, fontWeight: 'bold' }}>
-              Is Alix...
+              {t.sorting.prompt}
             </span>
             <span style={{ color: '#888', fontSize: 14 }}>
-              {currentIdx + 1}/{sortingScenarios.length}
+              {currentIdx + 1}/{scenarios.length}
             </span>
           </div>
 
@@ -216,14 +223,13 @@ export default function SortingPuzzle() {
             }}
           >
             <span style={{ color: COLORS.lightPink, fontSize: 13 }}>
-              Score: {score}
+              {t.sorting.score}: {score}
             </span>
             <span style={{ color: '#888', fontSize: 12 }}>
-              Need {REQUIRED_SCORE} to pass
+              {needToPassText}
             </span>
           </div>
 
-          {/* Timer bar */}
           <div
             style={{
               width: '100%',
@@ -250,7 +256,6 @@ export default function SortingPuzzle() {
             />
           </div>
 
-          {/* Scenario text */}
           <div
             style={{
               textAlign: 'center',
@@ -288,7 +293,6 @@ export default function SortingPuzzle() {
             )}
           </div>
 
-          {/* Answer buttons */}
           <div style={{ display: 'flex', gap: 16 }}>
             <button
               onClick={() => handleAnswer('angry')}
@@ -321,7 +325,7 @@ export default function SortingPuzzle() {
               }}
             >
               <span style={{ fontSize: 36 }}>😤</span>
-              <span>Angry</span>
+              <span>{t.sorting.angry}</span>
             </button>
 
             <button
@@ -355,7 +359,7 @@ export default function SortingPuzzle() {
               }}
             >
               <span style={{ fontSize: 36 }}>😴</span>
-              <span>Sleeping</span>
+              <span>{t.sorting.sleeping}</span>
             </button>
           </div>
         </div>

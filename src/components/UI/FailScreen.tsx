@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
+import { useT } from '../../store/langStore';
 
 export default function FailScreen() {
   const { showFail, failMessage, dismissFail } = useGameStore();
+  const t = useT();
   const [visible, setVisible] = useState(false);
   const [heartsArr] = useState(() =>
     Array.from({ length: 12 }, (_, i) => ({
@@ -100,7 +102,7 @@ export default function FailScreen() {
               padding: '0 20px',
             }}
           >
-            {failMessage || 'Love is about trying again'}
+            {failMessage || t.fail.defaultMessage}
           </p>
 
           <button
@@ -128,7 +130,7 @@ export default function FailScreen() {
               e.currentTarget.style.boxShadow = '0 0 25px rgba(255,107,157,0.35)';
             }}
           >
-            Try Again
+            {t.fail.button}
           </button>
         </div>
       </div>

@@ -1,12 +1,6 @@
 import { useState, useRef } from 'react';
 import { useGameStore } from '../../store/gameStore';
-
-const ZONE_NAMES = [
-  'University Garden',
-  'Parking Lot',
-  'Cozy Apartment',
-  'Movie Theater',
-];
+import { useT } from '../../store/langStore';
 
 const PIN = '1011';
 
@@ -21,6 +15,7 @@ const floatingHeart = (i: number) => ({
 
 export default function StartScreen() {
   const { gameStarted, startGame } = useGameStore();
+  const t = useT();
   const [leaving, setLeaving] = useState(false);
   const [showPin, setShowPin] = useState(false);
   const [pin, setPin] = useState(['', '', '', '']);
@@ -135,7 +130,7 @@ export default function StartScreen() {
             animation: 'slideDown 1s ease-out',
           }}
         >
-          Alix's Valentine Adventure
+          {t.start.title}
         </h1>
 
         <p
@@ -151,7 +146,7 @@ export default function StartScreen() {
           }}
         >
           <span style={{ animation: 'floatHeart 2s ease-in-out infinite' }}>💕</span>
-          An enchanted garden awaits
+          {t.start.subtitle}
           <span style={{ animation: 'floatHeart 2s ease-in-out infinite 0.5s' }}>💕</span>
         </p>
 
@@ -180,7 +175,7 @@ export default function StartScreen() {
               e.currentTarget.style.filter = 'brightness(1)';
             }}
           >
-            Start
+            {t.start.button}
           </button>
         ) : (
           <div
@@ -199,7 +194,7 @@ export default function StartScreen() {
                 color: '#f8a5c2',
               }}
             >
-              Enter our secret code
+              {t.start.pinPrompt}
             </p>
             <div
               style={{
@@ -249,7 +244,7 @@ export default function StartScreen() {
             </div>
             {shake && (
               <p style={{ color: '#e74c3c', fontSize: '0.9rem', fontFamily: "'Dancing Script', cursive" }}>
-                That's not it... try again
+                {t.start.pinError}
               </p>
             )}
           </div>
@@ -264,7 +259,7 @@ export default function StartScreen() {
             opacity: 0.5,
           }}
         >
-          {ZONE_NAMES.map((_, i) => (
+          {t.startZoneNames.map((_, i) => (
             <span key={i} style={{ fontSize: '14px' }}>🤍</span>
           ))}
         </div>
@@ -279,7 +274,7 @@ export default function StartScreen() {
             animation: 'fadeInUp 2.2s ease-out',
           }}
         >
-          A gift from Luigi
+          {t.start.footer}
         </p>
       </div>
     </>
