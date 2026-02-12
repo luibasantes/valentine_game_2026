@@ -1,73 +1,48 @@
-# React + TypeScript + Vite
+# Alix's Valentine Adventure
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A 3D Valentine's Day web game where the player walks through an enchanted garden, solving puzzles across four themed zones to unlock a final prize reveal.
 
-Currently, two official plugins are available:
+**Live:** [valentine2026.luigi-basantes.com](https://valentine2026.luigi-basantes.com)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tech Stack
 
-## React Compiler
+- **React + TypeScript** with Vite
+- **React Three Fiber** (@react-three/fiber) + **Drei** for 3D rendering
+- **Zustand** for state management
+- **canvas-confetti** for celebration effects
+- Hosted on **Cloudflare Pages**
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Game Flow
 
-## Expanding the ESLint configuration
+1. **Start Screen** - Enter a 4-digit PIN to begin
+2. **Zone 1: University Garden** - Trivia quiz about the couple's history
+3. **Zone 2: Parking Lot** - Top-down driving/parking mini-game
+4. **Zone 3: Cozy Apartment** - Memory card matching game
+5. **Zone 4: Movie Theater** - Timeline sorting puzzle
+6. **Prize Reveal** - Confetti celebration with gift vouchers
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Failing any puzzle resets all progress. Heart gates block the path until each zone's puzzle is completed.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Controls
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **WASD / Arrow Keys** - Move
+- **Space** - Jump
+- **Mouse Drag** - Orbit camera
+- **E** - Interact with puzzle triggers
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Development
+
+```bash
+npm install
+npm run dev       # Start dev server
+npm run build     # Type-check + production build
+npm run lint      # ESLint
+npm run preview   # Preview production build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Deployment
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npx vite build
+npx wrangler pages deploy dist --project-name=alix-valentine-adventure --commit-dirty=true
 ```
