@@ -245,21 +245,129 @@ export default function PlayerController() {
   return (
     <group>
       <group ref={playerRef} position={[0, 0.6, 4]}>
-        <mesh castShadow>
-          <capsuleGeometry args={[0.25, 0.5, 4, 8]} />
+        {/* Head */}
+        <mesh position={[0, 0.42, 0]} castShadow>
+          <sphereGeometry args={[0.22, 12, 12]} />
+          <meshStandardMaterial color="#FDDCBD" />
+        </mesh>
+
+        {/* Hair back volume */}
+        <mesh position={[0, 0.48, -0.06]} castShadow>
+          <sphereGeometry args={[0.25, 12, 12]} />
+          <meshStandardMaterial color="#5C3317" />
+        </mesh>
+        {/* Hair bangs */}
+        <mesh position={[0, 0.56, 0.1]}>
+          <boxGeometry args={[0.38, 0.1, 0.14]} />
+          <meshStandardMaterial color="#5C3317" />
+        </mesh>
+        {/* Pigtail left */}
+        <mesh position={[-0.25, 0.42, -0.04]} castShadow>
+          <sphereGeometry args={[0.1, 8, 8]} />
+          <meshStandardMaterial color="#5C3317" />
+        </mesh>
+        <mesh position={[-0.25, 0.3, -0.04]} castShadow>
+          <sphereGeometry args={[0.08, 8, 8]} />
+          <meshStandardMaterial color="#5C3317" />
+        </mesh>
+        {/* Pigtail right */}
+        <mesh position={[0.25, 0.42, -0.04]} castShadow>
+          <sphereGeometry args={[0.1, 8, 8]} />
+          <meshStandardMaterial color="#5C3317" />
+        </mesh>
+        <mesh position={[0.25, 0.3, -0.04]} castShadow>
+          <sphereGeometry args={[0.08, 8, 8]} />
+          <meshStandardMaterial color="#5C3317" />
+        </mesh>
+        {/* Hair ribbons */}
+        <mesh position={[-0.25, 0.52, -0.04]}>
+          <sphereGeometry args={[0.04, 6, 6]} />
+          <meshStandardMaterial color="#FF4D6D" />
+        </mesh>
+        <mesh position={[0.25, 0.52, -0.04]}>
+          <sphereGeometry args={[0.04, 6, 6]} />
+          <meshStandardMaterial color="#FF4D6D" />
+        </mesh>
+
+        {/* Eyes */}
+        <mesh position={[0.08, 0.44, 0.19]}>
+          <sphereGeometry args={[0.04, 8, 8]} />
+          <meshStandardMaterial color="#2C1810" />
+        </mesh>
+        <mesh position={[-0.08, 0.44, 0.19]}>
+          <sphereGeometry args={[0.04, 8, 8]} />
+          <meshStandardMaterial color="#2C1810" />
+        </mesh>
+        {/* Eye highlights */}
+        <mesh position={[0.07, 0.455, 0.22]}>
+          <sphereGeometry args={[0.015, 6, 6]} />
+          <meshStandardMaterial color="#FFFFFF" />
+        </mesh>
+        <mesh position={[-0.07, 0.455, 0.22]}>
+          <sphereGeometry args={[0.015, 6, 6]} />
+          <meshStandardMaterial color="#FFFFFF" />
+        </mesh>
+
+        {/* Blush cheeks */}
+        <mesh position={[0.14, 0.39, 0.15]}>
+          <sphereGeometry args={[0.04, 6, 6]} />
+          <meshStandardMaterial color="#FF9EAF" transparent opacity={0.5} />
+        </mesh>
+        <mesh position={[-0.14, 0.39, 0.15]}>
+          <sphereGeometry args={[0.04, 6, 6]} />
+          <meshStandardMaterial color="#FF9EAF" transparent opacity={0.5} />
+        </mesh>
+
+        {/* Smile */}
+        <mesh position={[0, 0.37, 0.2]} rotation={[0.2, 0, 0]}>
+          <torusGeometry args={[0.04, 0.008, 6, 12, Math.PI]} />
+          <meshStandardMaterial color="#D4736A" />
+        </mesh>
+
+        {/* Body / dress top */}
+        <mesh position={[0, 0.12, 0]} castShadow>
+          <cylinderGeometry args={[0.1, 0.14, 0.3, 10]} />
           <meshStandardMaterial color="#FF8FAB" />
         </mesh>
-        <mesh position={[0.1, 0.2, 0.22]}>
-          <sphereGeometry args={[0.05, 6, 6]} />
-          <meshStandardMaterial color="#333333" />
+        {/* Dress skirt */}
+        <mesh position={[0, -0.08, 0]} castShadow>
+          <cylinderGeometry args={[0.14, 0.25, 0.22, 10]} />
+          <meshStandardMaterial color="#FF6B9D" />
         </mesh>
-        <mesh position={[-0.1, 0.2, 0.22]}>
-          <sphereGeometry args={[0.05, 6, 6]} />
-          <meshStandardMaterial color="#333333" />
+        {/* Dress collar */}
+        <mesh position={[0, 0.26, 0.04]}>
+          <boxGeometry args={[0.14, 0.04, 0.08]} />
+          <meshStandardMaterial color="#FFFFFF" />
         </mesh>
-        <mesh position={[0, 0.55, 0]} scale={0.15}>
-          <sphereGeometry args={[1, 6, 6]} />
-          <meshStandardMaterial color="#FF4D6D" emissive="#FF4D6D" emissiveIntensity={0.5} />
+
+        {/* Arms */}
+        <mesh position={[0.2, 0.12, 0]} rotation={[0, 0, -0.3]} castShadow>
+          <capsuleGeometry args={[0.035, 0.2, 4, 6]} />
+          <meshStandardMaterial color="#FDDCBD" />
+        </mesh>
+        <mesh position={[-0.2, 0.12, 0]} rotation={[0, 0, 0.3]} castShadow>
+          <capsuleGeometry args={[0.035, 0.2, 4, 6]} />
+          <meshStandardMaterial color="#FDDCBD" />
+        </mesh>
+
+        {/* Legs */}
+        <mesh position={[0.08, -0.3, 0]} castShadow>
+          <capsuleGeometry args={[0.04, 0.16, 4, 6]} />
+          <meshStandardMaterial color="#FDDCBD" />
+        </mesh>
+        <mesh position={[-0.08, -0.3, 0]} castShadow>
+          <capsuleGeometry args={[0.04, 0.16, 4, 6]} />
+          <meshStandardMaterial color="#FDDCBD" />
+        </mesh>
+
+        {/* Shoes */}
+        <mesh position={[0.08, -0.44, 0.02]}>
+          <boxGeometry args={[0.09, 0.06, 0.12]} />
+          <meshStandardMaterial color="#FF4D6D" />
+        </mesh>
+        <mesh position={[-0.08, -0.44, 0.02]}>
+          <boxGeometry args={[0.09, 0.06, 0.12]} />
+          <meshStandardMaterial color="#FF4D6D" />
         </mesh>
       </group>
 

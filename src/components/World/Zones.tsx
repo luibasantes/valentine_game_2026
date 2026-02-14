@@ -68,22 +68,22 @@ function Zone0Start() {
   const t = useT();
   return (
     <group position={[0, 0, 0]}>
-      {/* Park bench */}
-      <group position={[2, 0, 0]}>
+      {/* Park bench beside the fence */}
+      <group position={[3.5, 0, 1]} rotation={[0, Math.PI / 2, 0]}>
         {/* Seat */}
         <mesh position={[0, 0.5, 0]} castShadow>
-          <boxGeometry args={[2, 0.1, 0.6]} />
+          <boxGeometry args={[1.6, 0.1, 0.55]} />
           <meshStandardMaterial color="#8B5E3C" />
         </mesh>
         {/* Backrest */}
-        <mesh position={[0, 0.9, -0.25]} castShadow>
-          <boxGeometry args={[2, 0.7, 0.08]} />
+        <mesh position={[0, 0.9, -0.22]} castShadow>
+          <boxGeometry args={[1.6, 0.6, 0.08]} />
           <meshStandardMaterial color="#8B5E3C" />
         </mesh>
         {/* Legs */}
-        {[-0.8, 0.8].map((x) => (
+        {[-0.6, 0.6].map((x) => (
           <mesh key={x} position={[x, 0.25, 0]} castShadow>
-            <boxGeometry args={[0.08, 0.5, 0.5]} />
+            <boxGeometry args={[0.08, 0.5, 0.45]} />
             <meshStandardMaterial color="#5C3A1E" />
           </mesh>
         ))}
