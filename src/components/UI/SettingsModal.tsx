@@ -19,7 +19,7 @@ export default function SettingsModal() {
           position: 'fixed',
           bottom: 16,
           right: 16,
-          zIndex: 500,
+          zIndex: 700,
           width: 40,
           height: 40,
           borderRadius: '50%',

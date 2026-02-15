@@ -10,6 +10,7 @@ import FailScreen from './components/UI/FailScreen';
 import DialogBox from './components/UI/DialogBox';
 import PrizeReveal from './components/UI/PrizeReveal';
 import SettingsModal from './components/UI/SettingsModal';
+import MobileControls from './components/UI/MobileControls';
 import TriviaPuzzle from './components/Puzzles/TriviaPuzzle';
 import DrivingPuzzle from './components/Puzzles/DrivingPuzzle';
 import MemoryPuzzle from './components/Puzzles/MemoryPuzzle';
@@ -67,6 +68,7 @@ export default function App() {
       {gameWon && <PrizeReveal />}
 
       {gameStarted && <SettingsModal />}
+      <MobileControls />
     </div>
   );
 }

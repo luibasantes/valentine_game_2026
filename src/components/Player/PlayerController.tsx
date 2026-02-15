@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import type { Group } from 'three';
 import { useGameStore } from '../../store/gameStore.ts';
 import { useT } from '../../store/langStore.ts';
+import { mobileInput } from '../../utils/mobileInput.ts';
 
 const MOVE_SPEED = 8;
 const MOUSE_SENSITIVITY = 0.003;
@@ -167,14 +168,31 @@ export default function PlayerController() {
     );
     const right = new THREE.Vector3(-forward.z, 0, forward.x);
 
+    if (mobileInput.cameraDX !== 0 || mobileInput.cameraDY !== 0) {
+      cameraAngle.current.azimuth -= mobileInput.cameraDX * MOUSE_SENSITIVITY;
+      cameraAngle.current.polar = THREE.MathUtils.clamp(
+        cameraAngle.current.polar + mobileInput.cameraDY * MOUSE_SENSITIVITY,
+        MIN_POLAR,
+        MAX_POLAR
+      );
+      mobileInput.cameraDX = 0;
+      mobileInput.cameraDY = 0;
+    }
+
     const moveDir = new THREE.Vector3(0, 0, 0);
     if (keys.has('KeyW') || keys.has('ArrowUp')) moveDir.add(forward);
     if (keys.has('KeyS') || keys.has('ArrowDown')) moveDir.sub(forward);
     if (keys.has('KeyA') || keys.has('ArrowLeft')) moveDir.sub(right);
     if (keys.has('KeyD') || keys.has('ArrowRight')) moveDir.add(right);
 
-    if (keys.has('Space') && playerPos.current.y <= GROUND_Y) {
+    if (Math.abs(mobileInput.moveX) > 0.05 || Math.abs(mobileInput.moveY) > 0.05) {
+      moveDir.add(right.clone().multiplyScalar(mobileInput.moveX));
+      moveDir.add(forward.clone().multiplyScalar(mobileInput.moveY));
+    }
+
+    if ((keys.has('Space') || mobileInput.jump) && playerPos.current.y <= GROUND_Y) {
       velocityY.current = JUMP_FORCE;
+      mobileInput.jump = false;
     }
 
     velocityY.current += GRAVITY * dt;
@@ -238,6 +256,17 @@ export default function PlayerController() {
     }
     setNearTrigger(closestTrigger);
     setShowPrompt(closestTrigger !== null && !activePuzzle);
+
+    if (mobileInput.interact && closestTrigger && !activePuzzle) {
+      mobileInput.interact = false;
+      const zoneIdx = closestTrigger.zoneIndex;
+      const canActivate = zoneIdx === 1 || zonesCompleted[zoneIdx - 2];
+      if (canActivate && !zonesCompleted[zoneIdx - 1]) {
+        setActivePuzzle(closestTrigger.puzzleId);
+      }
+    } else if (mobileInput.interact) {
+      mobileInput.interact = false;
+    }
   });
 
   if (!gameStarted) return null;
