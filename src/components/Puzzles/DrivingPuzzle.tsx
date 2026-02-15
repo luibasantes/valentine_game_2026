@@ -58,11 +58,14 @@ function aabb(
   return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
 }
 
+const isTouchDevice = () => 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
 export default function DrivingPuzzle() {
   const { completeZone, triggerFail } = useGameStore();
   const t = useT();
   const [fadingIn, setFadingIn] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isMobile] = useState(isTouchDevice);
 
   const carRef = useRef({ x: 540, y: 130, dir: 'down' as string });
   const keysRef = useRef<Set<string>>(new Set());
@@ -400,19 +403,72 @@ export default function DrivingPuzzle() {
         </div>
       </div>
 
-      <div
-        style={{
-          marginTop: 20,
-          display: 'flex',
-          gap: 12,
-          color: '#999',
-          fontSize: 13,
-        }}
-      >
-        <span><b>W</b> {t.driving.up}</span>
-        <span><b>A</b> {t.driving.left}</span>
-        <span><b>S</b> {t.driving.down}</span>
-        <span><b>D</b> {t.driving.right}</span>
+      {isMobile ? (
+        <DPad keysRef={keysRef} />
+      ) : (
+        <div
+          style={{
+            marginTop: 20,
+            display: 'flex',
+            gap: 12,
+            color: '#999',
+            fontSize: 13,
+          }}
+        >
+          <span><b>W</b> {t.driving.up}</span>
+          <span><b>A</b> {t.driving.left}</span>
+          <span><b>S</b> {t.driving.down}</span>
+          <span><b>D</b> {t.driving.right}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const DPAD_BTN: React.CSSProperties = {
+  width: 52,
+  height: 52,
+  borderRadius: 10,
+  border: '2px solid rgba(255,107,157,0.4)',
+  background: 'rgba(255,107,157,0.2)',
+  color: '#fff',
+  fontSize: 20,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  touchAction: 'none',
+  userSelect: 'none',
+  cursor: 'pointer',
+};
+
+function DPad({ keysRef }: { keysRef: React.RefObject<Set<string>> }) {
+  const press = (key: string) => keysRef.current?.add(key);
+  const release = (key: string) => keysRef.current?.delete(key);
+
+  const bind = (key: string) => ({
+    onPointerDown: (e: React.PointerEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      press(key);
+    },
+    onPointerUp: (e: React.PointerEvent) => {
+      e.stopPropagation();
+      release(key);
+    },
+    onPointerLeave: (e: React.PointerEvent) => {
+      e.stopPropagation();
+      release(key);
+    },
+    onPointerCancel: () => release(key),
+  });
+
+  return (
+    <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+      <button style={DPAD_BTN} {...bind('w')}>&#9650;</button>
+      <div style={{ display: 'flex', gap: 6 }}>
+        <button style={DPAD_BTN} {...bind('a')}>&#9664;</button>
+        <button style={DPAD_BTN} {...bind('s')}>&#9660;</button>
+        <button style={DPAD_BTN} {...bind('d')}>&#9654;</button>
       </div>
     </div>
   );
